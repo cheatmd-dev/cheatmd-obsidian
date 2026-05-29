@@ -1,0 +1,205 @@
+/* CheatMD Obsidian plugin styles.
+   Loaded automatically by Obsidian from the plugin folder. */
+
+/* ----- Variable prompt modal ----- */
+.cheatmd-modal-desc {
+  font-style: italic;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+/* Custom autocomplete dropdown overlay for option-backed variables. */
+.cheatmd-suggest-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.cheatmd-suggest-wrapper > input {
+  width: 100%;
+}
+
+.cheatmd-suggest-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-shadow: var(--shadow-s);
+  z-index: 2000;
+  max-height: 150px;
+  overflow-y: auto;
+  margin-top: 4px;
+  display: none;
+}
+
+.cheatmd-suggest-item {
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-normal);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cheatmd-suggest-item:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-accent);
+}
+
+/* ----- Play button injected above code blocks ----- */
+/* Matches the "Confirm & Execute" modal CTA: same accent fill so the run
+   action is consistent across plugin surfaces.
+   !important is needed because the button lives inside <pre>, which sets
+   its own font/color that would otherwise win via cascade. */
+.cheatmd-play-button,
+pre > .cheatmd-play-button {
+  cursor: pointer !important;
+  display: block !important;
+  width: fit-content !important;
+  margin: 0 0 8px 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  color: var(--interactive-accent) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-family: var(--font-interface) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  transition: opacity 0.1s ease, color 0.1s ease;
+  opacity: 0.85;
+}
+
+.cheatmd-play-button:hover,
+pre > .cheatmd-play-button:hover {
+  background: none !important;
+  color: var(--interactive-accent) !important;
+  text-decoration: underline !important;
+  opacity: 1;
+  transform: none !important;
+}
+
+/* ----- Inline execution output panel ----- */
+.cheatmd-output-container {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  font-family: var(--font-monospace);
+  font-size: 12px;
+  line-height: 1.5;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.cheatmd-output-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.cheatmd-close-btn,
+.cheatmd-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--background-modifier-border);
+  border: 1px solid var(--background-modifier-border);
+  cursor: pointer;
+  color: var(--text-normal);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
+}
+
+.cheatmd-copy-btn:hover {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border-color: var(--interactive-accent);
+}
+
+.cheatmd-close-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+.cheatmd-btn-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.cheatmd-status {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Status line variants set via setStatus() */
+.cheatmd-accent-bold {
+  color: var(--text-accent);
+  font-weight: bold;
+}
+
+.cheatmd-muted-italic {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.cheatmd-error-label {
+  color: var(--text-error);
+  font-weight: bold;
+}
+
+/* Completion result rendering */
+.cheatmd-result-ok {
+  font-weight: bold;
+  color: var(--text-success);
+  margin-bottom: 4px;
+  font-style: normal;
+}
+
+.cheatmd-result-fail {
+  font-weight: bold;
+  color: var(--text-error);
+  margin-bottom: 4px;
+  font-style: normal;
+}
+
+.cheatmd-result-cmd {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-style: normal;
+}
+
+.cheatmd-inline-code {
+  background: none;
+  padding: 0;
+}
+
+.cheatmd-output-empty {
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.cheatmd-output-block {
+  margin: 8px 0 0 0;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  font-style: normal;
+}
+
+/* No output content styling to keep output unstyled */

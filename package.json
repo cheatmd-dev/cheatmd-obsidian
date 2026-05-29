@@ -1,0 +1,23 @@
+{
+  "name": "obsidian-cheatmd",
+  "version": "0.1.0",
+  "description": "CheatMD for Obsidian",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs production",
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "Gubarz",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^16.0.0",
+    "builtin-modules": "^3.3.0",
+    "esbuild": "^0.20.0",
+    "jsdom": "^24.0.0",
+    "obsidian": "^1.1.1",
+    "typescript": "^5.0.0",
+    "vitest": "^1.4.0"
+  }
+}

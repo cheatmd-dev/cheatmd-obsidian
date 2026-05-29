@@ -1,0 +1,50 @@
+name: Bug report
+description: Report a problem with CheatMD for Obsidian.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the smallest set of steps that reproduces the issue.
+      placeholder: |
+        1. Open a vault with ...
+        2. Enable CheatMD ...
+        3. Select ...
+    validations:
+      required: true
+
+  - type: input
+    id: obsidian-version
+    attributes:
+      label: Obsidian version
+      placeholder: "1.7.7"
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      placeholder: "0.1.0"
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: "macOS, Windows, Linux, Flatpak"
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: Paste error messages or relevant output. Remove private paths or vault content first.
+      render: text

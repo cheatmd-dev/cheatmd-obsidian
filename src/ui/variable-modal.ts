@@ -2,15 +2,21 @@ import { App, Modal, Setting } from "obsidian";
 import { PromptVariable } from "../types";
 
 type SubmitCallback = (values: Record<string, string>) => void;
+type CancelCallback = () => void;
 
-// Modal prompt for variable values requested by a cheatmd runner.
+// Modal prompt for variable values requested by a cheatmd runner. When the
+// user confirms, `onSubmit` fires with the collected values. When the user
+// dismisses the modal (Esc, click-outside, X) without confirming, `onCancel`
+// fires so the runner can send a JSON-RPC abort and reap the child process.
 export class VariablePromptModal extends Modal {
   private values: Record<string, string> = {};
+  private submitted = false;
 
   constructor(
     app: App,
     private variables: PromptVariable[],
     private onSubmit: SubmitCallback,
+    private onCancel: CancelCallback = () => { /* noop */ },
   ) {
     super(app);
     this.variables = variables || [];
@@ -25,6 +31,7 @@ export class VariablePromptModal extends Modal {
 
   onClose(): void {
     this.contentEl.empty();
+    if (!this.submitted) this.onCancel();
   }
 
   private renderHeader(): void {
@@ -49,7 +56,7 @@ export class VariablePromptModal extends Modal {
   private renderOptionsField(setting: Setting, v: PromptVariable): void {
     setting.addText((text) => {
       text.setPlaceholder(v.placeholder || "Type or select value...");
-      text.setValue(v.options[0]);
+      text.setValue(defaultValueFor(v));
       text.onChange((value) => { this.values[v.name] = value; });
       // Deferred so the input is in the DOM under its Setting wrapper before
       // we re-parent it into the suggest wrapper.
@@ -71,6 +78,7 @@ export class VariablePromptModal extends Modal {
         .setButtonText("Confirm & Execute")
         .setCta()
         .onClick(() => {
+          this.submitted = true;
           this.close();
           this.onSubmit(this.values);
         })
@@ -102,7 +110,8 @@ function hasOptions(v: PromptVariable): boolean {
 }
 
 function defaultValueFor(v: PromptVariable): string {
-  return hasOptions(v) ? v.options[0] : (v.placeholder || "");
+  if (hasOptions(v)) return v.options![0];
+  return v.placeholder || "";
 }
 
 function wrapInput(inputEl: HTMLInputElement, parent: HTMLElement): HTMLElement {
@@ -128,7 +137,7 @@ function renderDropdownItems(
   onPick: (opt: string) => void,
 ): void {
   dropdown.innerHTML = "";
-  const filtered = filterOptions(v.options, inputEl.value, filterByValue);
+  const filtered = filterOptions(v.options ?? [], inputEl.value, filterByValue);
   if (filtered.length === 0) {
     dropdown.style.display = "none";
     return;

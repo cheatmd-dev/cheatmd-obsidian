@@ -3,7 +3,7 @@
   "name": "CheatMD",
   "version": "0.1.0",
   "minAppVersion": "0.15.0",
-  "description": "Syntax highlighting, diagnostic linting, autocompletion, and play button execution for CheatMD sheets.",
+  "description": "Inline execution, status linting, and variable autocompletion for CheatMD sheets.",
   "author": "Gubarz",
   "authorUrl": "https://github.com/cheatmd-dev/cheatmd-obsidian",
   "isDesktopOnly": true

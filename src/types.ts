@@ -2,13 +2,18 @@ export interface PromptVariable {
   name: string;
   header: string;
   placeholder: string;
-  options: string[];
+  // Preset values for a picker. Absent or empty means free-text input.
+  options?: string[];
   multi: boolean;
 }
 
 // Message sent by the cheatmd runner on the JSON-RPC `completed` notification.
+// Per the headless protocol, status is exactly one of:
+//   "success" — command ran and finished without error.
+//   "error"   — anything went wrong; `error` holds the human-readable reason
+//               and `exit_code` may be -1 when no process actually ran.
 export interface RunCompletedParams {
-  status: "success" | "failure";
+  status: "success" | "error";
   command: string;
   stdout: string;
   stderr: string;
@@ -50,7 +55,7 @@ export function isCompletedRpcMessage(msg: RpcMessage): msg is RpcMessage & { pa
     return false;
   }
   const params = msg.params as Record<string, unknown>;
-  return (params.status === "success" || params.status === "failure") &&
+  return (params.status === "success" || params.status === "error") &&
          typeof params.command === "string" &&
          typeof params.stdout === "string" &&
          typeof params.stderr === "string" &&
@@ -62,10 +67,15 @@ function isPromptVariable(value: unknown): value is PromptVariable {
     return false;
   }
   const variable = value as Record<string, unknown>;
+  // `options` is optional. Accept missing/null (runner may emit either) or a
+  // homogeneous string array; reject anything else.
+  const hasValidOptions =
+    variable.options == null ||
+    (Array.isArray(variable.options) && variable.options.every((opt) => typeof opt === "string"));
+
   return typeof variable.name === "string" &&
          typeof variable.header === "string" &&
          typeof variable.placeholder === "string" &&
-         Array.isArray(variable.options) &&
-         variable.options.every((option) => typeof option === "string") &&
+         hasValidOptions &&
          typeof variable.multi === "boolean";
 }

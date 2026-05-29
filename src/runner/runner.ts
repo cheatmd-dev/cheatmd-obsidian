@@ -84,11 +84,17 @@ export class CheatRunner {
     cacheKey: string,
     panel: PanelHandle,
   ): void {
+    // cheatmd's runner emits non-JSON banners and progress lines on stdout
+    // alongside JSON-RPC frames. The current protocol uses objects only — no
+    // batched (array-wrapped) responses — so any frame starts with `{`.
+    // Update this guard if the protocol gains batched responses.
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("{")) return;
     let req: RpcMessage;
     try {
-      req = JSON.parse(line) as RpcMessage;
+      req = JSON.parse(trimmed) as RpcMessage;
     } catch (err: unknown) {
-      logger.error(`Failed to parse JSON-RPC line from process output: ${line}`, err);
+      logger.error(`Failed to parse JSON-RPC line from process output: ${trimmed}`, err);
       panel.setStatusText(`RPC Syntax Error: ${errorMessage(err)}`);
       return;
     }
@@ -108,10 +114,21 @@ export class CheatRunner {
     panel: PanelHandle,
   ): void {
     panel.setStatusNode(createAccentNode("Prompting variables...", "cheatmd-accent-bold"));
-    const modal = new VariablePromptModal(this.deps.app, req.params.variables, (values) => {
-      panel.setStatusNode(createAccentNode("Submitting variables...", "cheatmd-muted-italic"));
-      child.stdin?.write(rpcResponse(req.id, values) + "\n");
-    });
+    const modal = new VariablePromptModal(
+      this.deps.app,
+      req.params.variables,
+      (values) => {
+        panel.setStatusNode(createAccentNode("Submitting variables...", "cheatmd-muted-italic"));
+        child.stdin?.write(rpcResponse(req.id, values) + "\n");
+      },
+      () => {
+        // Per the headless spec, a JSON-RPC error with code -32000 tells the
+        // runner the user aborted. Send it before killing the child so the
+        // runner exits cleanly instead of dying on a broken stdin write.
+        panel.setStatusNode(createAccentNode("Cancelled by user.", "cheatmd-muted-italic"));
+        child.stdin?.write(rpcErrorAborted(req.id) + "\n");
+      },
+    );
     modal.open();
   }
 
@@ -136,6 +153,17 @@ function buildQuery(meta: BlockMeta): string {
 
 function rpcResponse(id: unknown, values: Record<string, string>): string {
   return JSON.stringify({ jsonrpc: "2.0", result: { values }, id });
+}
+
+// JSON-RPC error frame the headless spec uses to signal user abort. Code
+// -32000 is the protocol's "server error" range, reserved for application
+// signals like this one.
+function rpcErrorAborted(id: unknown): string {
+  return JSON.stringify({
+    jsonrpc: "2.0",
+    error: { code: -32000, message: "User aborted" },
+    id,
+  });
 }
 
 function processErrorNode(message: string): HTMLElement {

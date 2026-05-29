@@ -1,5 +1,5 @@
 import { MarkdownPostProcessorContext } from "obsidian";
-import { FENCE_TITLE_DOUBLE, FENCE_TITLE_SINGLE } from "../constants";
+import { CHEAT_OPEN, FENCE_TITLE_DOUBLE, FENCE_TITLE_SINGLE } from "../constants";
 import { BlockMeta, CachedRun } from "../types";
 import { createPanel } from "../output/panel";
 import { renderRunResult } from "../output/renderer";
@@ -62,8 +62,14 @@ function hasPanelSibling(preEl: HTMLElement): boolean {
 }
 
 function extractBlockMeta(lines: string[], lineStart: number): BlockMeta | null {
-  const heading = scanHeading(lines, lineStart);
+  const headingLine = scanHeadingLine(lines, lineStart);
+  if (headingLine === -1) return null;
+
+  const heading = lines[headingLine].replace(/^#+\s*/, "").trim();
   if (!heading) return null;
+
+  if (!hasCheatBlockInSection(lines, headingLine)) return null;
+
   return {
     heading,
     fenceTitle: parseFenceTitle(lines[lineStart] || ""),
@@ -71,12 +77,24 @@ function extractBlockMeta(lines: string[], lineStart: number): BlockMeta | null 
   };
 }
 
-function scanHeading(lines: string[], from: number): string {
+function scanHeadingLine(lines: string[], from: number): number {
   for (let i = from; i >= 0; i--) {
     const text = (lines[i] || "").trim();
-    if (text.startsWith("#")) return text.replace(/^#+\s*/, "").trim();
+    if (text.startsWith("#")) return i;
   }
-  return "";
+  return -1;
+}
+
+// Single pass from the heading down: bail at the next heading, return true
+// on the first `<!-- cheat` opener. Uses the canonical CHEAT_OPEN regex so
+// this stays in sync with the rest of the plugin's cheat-block detection.
+function hasCheatBlockInSection(lines: string[], headingLine: number): boolean {
+  for (let i = headingLine + 1; i < lines.length; i++) {
+    const text = lines[i] || "";
+    if (text.trim().startsWith("#")) return false;
+    if (CHEAT_OPEN.test(text)) return true;
+  }
+  return false;
 }
 
 function parseFenceTitle(openingLine: string): string {

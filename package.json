@@ -9,7 +9,7 @@
     "test": "vitest run"
   },
   "keywords": [],
-  "author": "Gubarz",
+  "author": "cheatmd-dev",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.19.41",

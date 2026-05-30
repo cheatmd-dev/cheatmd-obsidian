@@ -1,6 +1,6 @@
 # CheatMD for Obsidian
 
-A lightweight Obsidian plugin providing editor and preview support for **[CheatMD](https://github.com/gubarz/cheatmd)** sheets. Write executable Markdown cheatsheets directly inside your vault.
+A lightweight Obsidian plugin providing editor and preview support for **[CheatMD](https://github.com/cheatmd-dev/cheatmd)** sheets. Write executable Markdown cheatsheets directly inside your vault.
 
 ## Features
 
@@ -14,7 +14,7 @@ A lightweight Obsidian plugin providing editor and preview support for **[CheatM
 CheatMD for Obsidian requires the `cheatmd` command-line tool. Install CheatMD from the official releases or follow the setup instructions at either location:
 
 - Website: https://cheatmd.dev
-- GitHub: https://github.com/gubarz/cheatmd
+- GitHub: https://github.com/cheatmd-dev/cheatmd
 
 After installing, make sure `cheatmd` is available in your system path. You can also set an absolute path in the plugin settings.
 

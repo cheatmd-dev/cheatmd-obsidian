@@ -39,7 +39,7 @@ jobs:
         run: node -e "const tag=process.env.GITHUB_REF_NAME.replace(/^v/,''); const manifest=require('./manifest.json'); if (manifest.version !== tag) { throw new Error('manifest version '+manifest.version+' does not match tag '+tag); }"
 
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             main.js
